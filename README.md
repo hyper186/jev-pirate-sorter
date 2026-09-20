@@ -1,37 +1,48 @@
-# Jev's Pirate Sorting Dock
+# Jev’s Pirate Sorting Dock
 
-An interactive demo of Jev's typed decisions using Pirate Nation Founder PFP metadata. A central heap of pirate portraits is sorted by animated brass arms into labeled piles. Trait Sort uses official metadata families; Captain's Orders offers thematic bins and sends the bounded choice to Venice when a server-side key is configured.
+[Live demo](https://jev-pirate-sorter.vercel.app) · [Jev on Venice](https://venice.ai/lp/jev)
 
-**Live demo:** https://jev-pirate-sorter.vercel.app
+An interactive, independent Jev demonstration with official Pirate Nation metadata and illustrated/voxel portraits. Jev evaluates a batch of choice questions; two articulated sorting arms pick up individual cards and carry them to their returned destinations.
 
-The first run uses a curated 18-pirate visual sample, drawn from the 9,999-pirate archive. It is intentionally small enough to watch while preserving the same typed-decision pattern used for larger batches.
+## Try it
 
-## Run it
+- **Trait Sort:** classify by Character Type.
+- **Captain’s Orders:** write a brief and define 2–6 named piles with your own criteria, or start with a preset.
+- **Start sorting:** requests one batch of actual `jev-latest` answers through Venice. No simulated answers substitute for failures.
+- **Pause / Resume:** freezes and resumes the current carried card. Speed changes apply to the current movement. Reset aborts pending requests and invalidates old responses.
+- **Inspect:** select any portrait, open a pile to browse all its cards, or follow the current arm. The inspector shows the real choice, confidence, and probability distribution.
+- **Inside the decision:** inspect the submitted brief, metadata, criteria, returned batch, and server-measured Venice round-trip time. Animation duration is separate.
 
-```bash
+The current confidence threshold remains 85%. Review decisions and low-confidence choices are physically delivered to the review pile. This is a conservative routing policy, not an accuracy benchmark. Portraits visualize results; Jev evaluates supplied metadata, not image pixels.
+
+## Run locally
+
+```sh
 npm install
+cp .env.example .env.local
+# Enter VENICE_API_KEY in .env.local; never commit it.
 npm run dev
 ```
 
-Open `http://localhost:3000`. Without `VENICE_API_KEY`, the dock clearly shows Preview mode and uses deterministic local decisions so the experience remains explorable. With a key in a local `.env.local`, each sorting run batches all sample records into one call to `POST /api/v1/decisions` with `model: jev-latest`; the key never reaches the browser.
+Without a server key the interface reports that live Jev is not configured and does not move cards. In Vercel, configure the server-only `VENICE_API_KEY` and redeploy. Never use a NEXT_PUBLIC prefix for this key.
 
-```bash
-cp .env.example .env.local
-# Set VENICE_API_KEY in .env.local
-```
-
-## Checks
-
-```bash
+```sh
 npm test
 npm run typecheck
 npm run build
 ```
 
-Artwork is from the public [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), released under CC0. The project is an independent demonstration and does not claim endorsement by Proof of Play, TypeSafe AI, or Venice.
+## Collection expansion
 
-## Testing status
+This release uses 18 records. Metadata snapshots are stored in `data/pirates.json`, fetched from `https://api.proofofplay.gg/api/metadata/pirate/{id}`. Some archive portraits have unavailable metadata; never invent traits for them.
 
-This is an 18-record prototype, not the full 9,999-record installation. Official metadata snapshots are in `data/pirates.json`; unavailable traits route to review. Live runs send a single shared-state batch to Venice, then animate the returned decisions. Failures stop the run rather than substituting simulated answers. Confidence is a model signal, not a measured accuracy rate.
+To load all 9,999 portraits:
+1. Run a resumable, concurrency-limited ingestion task that enumerates portrait IDs and fetches official metadata, recording missing/error states and source timestamps.
+2. Publish a versioned, compressed manifest and pre-sized image thumbnails to CDN storage. Keep full portraits for the inspector and reference both illustrated and voxel variants.
+3. Load the manifest in pages and virtualize the central heap and completed pile galleries; do not render 9,999 SVG images or download all full-size files on first load.
+4. Send bounded Jev batches from a server-managed run queue, store decisions, and feed a separate animation queue. Persist progress for reconnect/resume. The current endpoint caps a request at 32 records.
+5. Reconcile total counts: unsorted + in transit + placed + review must equal the manifest count.
 
-Before a public showcase: expand and diversify the verified collection, finish arms that track each card to its exact pile, add user-authored criteria, and measure throughput and accuracy over larger runs.
+Full-collection ingestion, quality/threshold evaluation, public-load hardening and comparative benchmarks are not included in this release.
+
+Artwork is from the public [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), released under CC0. This project does not claim endorsement by Proof of Play, TypeSafe AI, or Venice.

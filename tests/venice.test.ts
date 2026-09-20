@@ -22,3 +22,22 @@ test('uses shared metadata and validates live typed answers', async () => {
   const invalid = await decide(request(), 'test-key', async () => Response.json({ answers: {} }));
   assert.equal(invalid.status, 502);
 });
+
+test('sends a visitor’s captain brief and exact named pile criteria to Jev', async () => {
+  let received: any;
+  const response = await decide(new Request('https://example.test', { method: 'POST', body: JSON.stringify({
+    brief: 'Assemble a royal delegation and a ghost crew.', records: [{ tokenId: 1, traits: { 'Character Type': 'Zombie Male' } }],
+    bins: [{ id: 'royal', label: 'Royal delegation', description: 'Crowns or formal officer attire.' }, { id: 'ghosts', label: 'Ghost crew', description: 'Undead or supernatural pirates.' }],
+  }) }), 'test-key', async (_url, init) => {
+    received = JSON.parse(init!.body as string);
+    return Response.json({ answers: { pirate_1: { choice: 'ghosts', confidence: 0.95, probabilities: { royal: 0, ghosts: 0.98, review: 0.02 } } } });
+  });
+  assert.equal(response.status, 200);
+  assert.equal(received.state.captainBrief, 'Assemble a royal delegation and a ghost crew.');
+  assert.equal(received.questions.pirate_1.criteria.royal, 'Royal delegation: Crowns or formal officer attire.');
+});
+
+test('rejects duplicate or reserved pile identifiers before spending a model request', async () => {
+  const response = await decide(new Request('https://example.test', { method: 'POST', body: JSON.stringify({records:[{tokenId:1,traits:{}}], bins:[{id:'review',description:'A'},{id:'review',description:'B'}]}) }), 'test-key', async () => { throw new Error('must not call Venice'); });
+  assert.equal(response.status, 400);
+});

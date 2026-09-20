@@ -1,113 +1,100 @@
 'use client';
-
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Anchor, ChevronDown, ExternalLink, Gauge, Info, Pause, Play, RotateCcw, Sparkles, Zap } from 'lucide-react';
-import { normalizeCategory } from '../lib/sorter';
+import { useEffect, useRef, useState } from 'react';
+import { Anchor, ExternalLink, Gauge, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
 import { pirates } from '../lib/pirates';
-import type { PirateRecord } from '../lib/types';
+import { advanceProgress } from '../lib/choreography';
+import { destinationFor, REVIEW_BIN, type Bin, type DockRun } from '../lib/dock-types';
+import SortingFloor from '../components/SortingFloor';
+import OrdersEditor, { presets } from '../components/OrdersEditor';
 
-type Mode = 'traits' | 'orders';
-type ArtStyle = 'illustrated' | 'voxel';
-type Status = 'unsorted' | 'deciding' | 'moving' | 'placed' | 'review';
-type Card = PirateRecord & { category: string; status: Status; destination?: string; confidence?: number; x: number; y: number; rotation: number };
-
-const traitBins = ['Human', 'Zombie', 'Vampire', 'Rainbow', 'Golden', 'Shark', 'Special'];
-const orderPresets = [
-  { label: 'Midnight watch', bins: [{ id: 'spooky', label: 'Night Watch', description: 'Undead, supernatural, ghostly or vampire themes.' }, { id: 'bright', label: 'Festival Crew', description: 'Colorful, rainbow, golden or celebratory traits.' }, { id: 'crew', label: 'Deck Crew', description: 'Ordinary human sailors and practical shipboard outfits.' }] },
-  { label: 'Fleet casting', bins: [{ id: 'captain', label: 'Captains', description: 'Formal, naval, commanding or officer-like outfits.' }, { id: 'oddity', label: 'Oddities', description: 'Robots, mages, ghosts, sharks or unusual mascots.' }, { id: 'shore', label: 'Shore Party', description: 'Bright, festive or relaxed seaside personalities.' }] },
-];
-
-function makeCards(): Card[] {
-  return pirates.map((pirate, index) => ({ ...pirate, category: normalizeCategory(pirate.characterType, true), status: 'unsorted', x: 50 + ((index * 29) % 260), y: 35 + ((index * 47) % 210), rotation: -12 + ((index * 17) % 25) }));
-}
-
-function previewDestination(card: Card, mode: Mode, bins: typeof orderPresets[number]['bins']): string {
-  if (mode === 'traits') return card.category === 'Special' ? 'Special' : card.category;
-  const type = (card.characterType || '').toLowerCase();
-  if (bins[0].id === 'spooky') return type.includes('zombie') || type.includes('vampire') || type.includes('ghost') ? 'spooky' : type.includes('rainbow') || type.includes('golden') ? 'bright' : 'crew';
-  if (bins[0].id === 'captain') return type.includes('human') ? 'captain' : type.includes('rainbow') || type.includes('golden') ? 'shore' : 'oddity';
-  return type.includes('human') ? 'shore' : 'oddity';
-}
-
+const traitBins: Bin[] = ['Human','Zombie','Vampire','Rainbow','Golden','Shark','Special'].map(label=>({id:label,label,description:label==='Special'?'A supplied Character Type outside Human, Zombie, Vampire, Rainbow, Golden and Shark.':`Character Type contains ${label}.`}));
 export default function Home() {
-  const [mode, setMode] = useState<Mode>('traits');
-  const [artStyle, setArtStyle] = useState<ArtStyle>('illustrated');
-  const [cards, setCards] = useState<Card[]>(makeCards);
-  const [running, setRunning] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [speed, setSpeed] = useState(1);
-  const [error, setError] = useState('');
-  const [latency, setLatency] = useState<number | null>(null);
-  const inFlight = useRef<number | null>(null);
-  const decisionBatch = useRef<{ mode: string; elapsedMs?: number; answers?: Record<string, { choice: string; confidence: number }> } | null>(null);
-  const [selectedId, setSelectedId] = useState(1);
-  const [placedCount, setPlacedCount] = useState(0);
-  const [decisionCount, setDecisionCount] = useState(0);
-  const [reviewCount, setReviewCount] = useState(0);
-  const [liveMode, setLiveMode] = useState<'preview' | 'live' | 'ready'>('ready');
-  const [preset, setPreset] = useState(0);
-  const runEpoch = useRef(0);
-  const bins = useMemo(() => mode === 'traits' ? traitBins.map((label) => ({ id: label, label, description: label === 'Special' ? 'A supplied Character Type outside Human, Zombie, Vampire, Rainbow, Golden and Shark.' : `Character Type contains ${label}.` })) : orderPresets[preset].bins, [mode, preset]);
-  const selected = cards.find((card) => card.tokenId === selectedId) || cards[0];
-  const visibleCards = useMemo(() => cards.filter((card) => card.status !== 'placed'), [cards]);
+  const [mode,setMode]=useState<'traits'|'orders'>('traits');
+  const [art,setArt]=useState<'illustrated'|'voxel'>('illustrated');
+  const [brief,setBrief]=useState(presets[0].brief);
+  const [customBins,setCustomBins]=useState<Bin[]>(presets[0].bins.map(b=>({...b})));
+  const [run,setRun]=useState<DockRun|null>(null);
+  const [requesting,setRequesting]=useState(false);
+  const [delivered,setDelivered]=useState(0);
+  const [progress,setProgress]=useState(0);
+  const [paused,setPaused]=useState(false);
+  const [speed,setSpeed]=useState(1);
+  const [error,setError]=useState('');
+  const [selectedId,setSelectedId]=useState(1);
+  const [follow,setFollow]=useState(true);
+  const epoch=useRef(0);
+  const abort=useRef<AbortController|null>(null);
+  const pausedRef=useRef(false), speedRef=useRef(1);
+  const bins=run?.bins || (mode==='traits'?traitBins:customBins);
+  const selected=pirates.find(p=>p.tokenId===selectedId) || pirates[0];
+  const selectedIndex=pirates.findIndex(p=>p.tokenId===selectedId);
+  const answer=run?.batch.answers[`pirate_${selectedId}`];
+  const allBins=[...bins,REVIEW_BIN];
+  const complete=!!run && delivered===pirates.length;
+  const locked=!!run || requesting;
+  const placed=run?pirates.slice(0,delivered).filter(p=>destinationFor(run.batch.answers[`pirate_${p.tokenId}`],bins)!=='review').length:0;
+  const valid=mode==='traits' || (brief.trim().length>0 && customBins.every(b=>b.label.trim() && b.description.trim()) && new Set(customBins.map(b=>b.label.trim().toLowerCase())).size===customBins.length);
 
-  useEffect(() => {
-    if (!running || paused || inFlight.current === runEpoch.current) return;
-    const next = cards.find((card) => card.status === 'unsorted');
-    if (!next) { setRunning(false); return; }
-    const epoch = runEpoch.current;
-    const timer = window.setTimeout(async () => {
-      inFlight.current = epoch;
-      let destination = mode === 'traits' ? next.category : previewDestination(next, mode, bins);
-      let confidence: number | undefined;
-      try {
-        let data = decisionBatch.current;
-        if (!data) {
-          const response = await fetch('/api/decisions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ records: pirates.map(({tokenId, traits}) => ({tokenId, traits})), bins }) });
-          const result = await response.json();
-          if (runEpoch.current !== epoch) return;
-          if (!response.ok) throw new Error(result.error || 'The decision request failed. Please retry.');
-          data = result;
-          decisionBatch.current = data;
-        }
-        if (!data) throw new Error('No decision batch was returned.');
-        const answer = data.answers?.[`pirate_${next.tokenId}`];
-        if (data.mode === 'live' && answer?.choice && Number.isFinite(answer.confidence)) {
-          destination = answer.choice; confidence = answer.confidence; setLiveMode('live'); setLatency(data.elapsedMs ?? null);
-        } else if (data.mode === 'preview') {
-          setLiveMode('preview');
-        } else throw new Error('No valid Jev decision was returned. Sorting stopped.');
-      } catch (cause) {
-        if (runEpoch.current === epoch) { setError(cause instanceof Error ? cause.message : 'Decision failed.'); setRunning(false); }
-        return;
-      } finally { if (inFlight.current === epoch) inFlight.current = null; }
-      if (runEpoch.current !== epoch) return;
-      const accepted = (confidence === undefined || confidence >= 0.85) && bins.some((bin) => bin.id === destination);
-      setDecisionCount((count) => count + 1);
-      if (!accepted) setReviewCount((count) => count + 1);
-      setCards((current) => current.map((card) => card.tokenId === next.tokenId ? { ...card, status: accepted ? 'moving' : 'review', destination, confidence } : card));
-      window.setTimeout(() => {
-        if (!accepted) return;
-        if (runEpoch.current !== epoch) return;
-        setCards((current) => current.map((card) => card.tokenId === next.tokenId ? { ...card, status: 'placed' } : card));
-        setPlacedCount((count) => count + 1);
-      }, Math.max(120, 720 / speed));
-    }, Math.max(110, 860 / speed));
-    return () => window.clearTimeout(timer);
-  }, [running, paused, cards, mode, bins, speed]);
-
-  const reset = () => { runEpoch.current += 1; setRunning(false); setPaused(false); setCards(makeCards()); setPlacedCount(0); setDecisionCount(0); setReviewCount(0); setLiveMode('ready'); decisionBatch.current = null; setError(''); setLatency(null); };
-  const start = () => { setError(''); if (placedCount === pirates.length) reset(); setRunning(true); setPaused(false); };
-
+  useEffect(()=>{
+    if (!run || delivered>=pirates.length) return;
+    const currentEpoch=epoch.current;
+    let frame:number, previous=0, value=0;
+    function tick(now:number) {
+      if(currentEpoch!==epoch.current) return;
+      if(previous) value=advanceProgress(value,now-previous,speedRef.current,pausedRef.current);
+      previous=now;
+      setProgress(value);
+      if(value>=1) { setProgress(0); setDelivered(count=>count+1); return; }
+      frame=requestAnimationFrame(tick);
+    }
+    frame=requestAnimationFrame(tick);
+    return ()=>cancelAnimationFrame(frame);
+  },[run,delivered]);
+  useEffect(()=>{ if(run && follow && delivered<pirates.length) setSelectedId(pirates[delivered].tokenId); },[run,delivered,follow]);
+  useEffect(()=>()=>{epoch.current+=1;abort.current?.abort();},[]);
+  const reset=()=>{epoch.current+=1;abort.current?.abort();abort.current=null;setRun(null);setRequesting(false);setDelivered(0);setProgress(0);setPaused(false);pausedRef.current=false;setError('');};
+  const select=(id:number)=>{setSelectedId(id);setFollow(false);};
+  const togglePause=()=>{pausedRef.current=!pausedRef.current;setPaused(pausedRef.current);};
+  async function start() {
+    if(run && !complete){togglePause();return;}
+    if(!valid || requesting)return;
+    reset();
+    const currentEpoch=epoch.current;
+    const submittedBins=(mode==='traits'?traitBins:customBins).map(b=>({...b,label:b.label.trim(),description:b.description.trim()}));
+    const submittedBrief=mode==='traits'?'Sort by official Character Type. Missing traits must go to review.':brief.trim();
+    const request={records:pirates.map(({tokenId,traits})=>({tokenId,traits})),bins:submittedBins,brief:submittedBrief};
+    const controller=new AbortController();abort.current=controller;setRequesting(true);setFollow(true);
+    try {
+      const response=await fetch('/api/decisions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),signal:controller.signal});
+      const data=await response.json();
+      if(epoch.current!==currentEpoch)return;
+      if(!response.ok)throw new Error(data.error || 'Venice could not complete this run. Please retry.');
+      if(data.mode!=='live')throw new Error('Live Jev is not configured. Add the Venice key to the server and redeploy.');
+      if(pirates.some(p=>{const a=data.answers?.[`pirate_${p.tokenId}`];return !a || typeof a.choice!=='string' || !Number.isFinite(a.confidence);}))throw new Error('The batch was incomplete. No pirates were moved. Please retry.');
+      setRun({batch:data,bins:submittedBins,brief:submittedBrief,mode,request});
+    } catch(cause){if(epoch.current===currentEpoch)setError(cause instanceof Error?cause.message:'The request failed. Please retry.');}
+    finally{if(epoch.current===currentEpoch)setRequesting(false);}
+  }
   return <main className="dock-shell">
-    <header className="topbar">
-      <div className="brand"><span className="brand-mark"><Anchor size={17} /></span><div><p className="eyebrow">TYPESAFE × VENICE</p><h1>Jev&apos;s Pirate Sorting Dock</h1></div></div>
-      <div className="top-actions"><span className={`mode-pill ${liveMode}`}><span className="pulse-dot" />{error ? 'Decision error' : liveMode === 'live' ? 'Live Jev' : liveMode === 'ready' ? 'Ready to test Jev' : 'Preview mode'}</span><a className="text-link" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">How Jev works <ExternalLink size={13} /></a></div>
-    </header>
-    <section className="hero-row"><div><p className="kicker"><Sparkles size={14} /> MACHINE-NATIVE INTELLIGENCE</p><h2>Give a pile of pirates<br /><em>a captain&apos;s orders.</em></h2><p className="lede">Jev makes the decision. The dock does the work. Watch a fast, type-safe model turn Pirate Nation traits into a living sorting system.</p></div><div className="hero-stat"><span>COLLECTION INDEX</span><strong>9,999</strong><small>archived Founder PFPs</small></div></section>
-    <section className="control-panel"><div className="segmented"><button className={mode === 'traits' ? 'active' : ''} onClick={() => { setMode('traits'); reset(); }}>Trait sort</button><button className={mode === 'orders' ? 'active' : ''} onClick={() => { setMode('orders'); reset(); }}>Captain&apos;s Orders</button></div><div className="control-group"><label>Portraits</label><button className="select-btn" onClick={() => setArtStyle(artStyle === 'illustrated' ? 'voxel' : 'illustrated')}>{artStyle === 'illustrated' ? 'Illustrated PFPs' : 'Voxel portraits'} <ChevronDown size={14} /></button></div>{mode === 'orders' && <div className="control-group"><label>Brief</label><button className="select-btn" onClick={() => { setPreset((preset + 1) % orderPresets.length); reset(); }}>{orderPresets[preset].label} <ChevronDown size={14} /></button></div>}<div className="control-spacer" /><div className="speed-control"><Gauge size={14} /><input aria-label="Animation speed" type="range" min="0.5" max="2.5" step="0.5" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} /><span>{speed}×</span></div><button className="reset-btn" onClick={reset}><RotateCcw size={15} /> Reset</button><button className="start-btn" onClick={running && !paused ? () => setPaused(true) : start}>{running && !paused ? <><Pause size={16} /> Pause</> : <><Play size={16} /> {running ? 'Resume' : 'Start sorting'}</>}</button></section>
-    {error && <p className="error-banner" role="alert">{error} No simulated decisions were substituted.</p>}<section className="stats-row"><div><span>DECIDED</span><strong>{decisionCount}</strong><small>/ {pirates.length}</small></div><div><span>PLACED</span><strong className="teal">{placedCount}</strong><small>cards</small></div><div><span>IN REVIEW</span><strong className="amber">{reviewCount}</strong><small>uncertain</small></div><div className="stats-note"><Zap size={15} /> One shared state. Many typed decisions. <b>{mode === 'traits' ? 'Official metadata' : 'Human-written criteria'}</b></div></section>
-    <section className="sorting-layout"><div className="stage-wrap"><div className="stage-head"><div><span className="section-label">LIVE SORTING FLOOR</span><p>{running ? (paused ? 'Dock paused — decisions are held safely.' : 'Arms are reading the pile…') : '18 real portraits. One shared pile.'}</p></div><div className="arm-status"><i className="arm-light" /> 2 sorting arms</div></div><div className={`stage ${running && !paused ? 'working' : ''}`}><div className="stage-grid" /><div className="glow" /><div className="arm arm-left"><span className="joint one" /><span className="joint two" /><span className="gripper" /></div><div className="arm arm-right"><span className="joint one" /><span className="joint two" /><span className="gripper" /></div><div className="pile-label">ON THE DOCK <b>{visibleCards.length}</b></div><div className="card-pile">{visibleCards.map((card, index) => <button key={card.tokenId} className={`pirate-card ${card.status} ${selectedId === card.tokenId ? 'selected' : ''}`} onClick={() => setSelectedId(card.tokenId)} style={{ left: `${card.x}px`, top: `${card.y}px`, zIndex: index, transform: `rotate(${card.rotation}deg) ${card.status === 'moving' ? 'translate(90px, -40px) scale(1.04)' : ''}` }}><img src={artStyle === 'illustrated' ? card.images.illustrated : card.images.voxel} alt={card.name} /><span>#{card.tokenId}</span></button>)}</div><div className="dock-floor" /></div><div className="pile-grid">{bins.map((bin) => <div className="destination-pile" key={bin.id}><div className="pile-crest">{bin.id === 'spooky' ? '☾' : bin.id === 'bright' ? '✦' : bin.id === 'captain' ? '⚓' : '◇'}</div><div><span>{bin.label}</span><strong>{cards.filter((card) => card.status === 'placed' && card.destination === bin.id).length}</strong></div><small>{bin.description}</small><div className="sorted-cards">{cards.filter((card) => card.status === 'placed' && card.destination === bin.id).map((card) => <button key={card.tokenId} onClick={() => setSelectedId(card.tokenId)} aria-label={`Inspect sorted pirate ${card.tokenId}`}><img src={card.images[artStyle]} alt={card.name} /></button>)}</div></div>)}</div></div><aside className="inspector"><div className="inspector-head"><div><span className="section-label">DECISION INSPECTOR</span><h3>Pirate #{selected?.tokenId}</h3></div><Info size={17} /></div>{selected && <><div className="inspector-image"><img src={artStyle === 'illustrated' ? selected.images.illustrated : selected.images.voxel} alt={selected.name} /><span className="id-badge">#{selected.tokenId}</span></div><div className="pirate-name">{selected.name}<a href={selected.source} target="_blank" rel="noreferrer"><ExternalLink size={13} /></a></div><div className="trait-list">{Object.entries(selected.traits).map(([key, value]) => <div key={key}><span>{key}</span><b>{value}</b></div>)}{!selected.characterType && <div><span>Category</span><b className="fallback">Rare fallback</b></div>}</div><div className="decision-box"><div className="decision-line"><span>JEV DESTINATION</span><b>{selected.status === 'unsorted' ? 'Waiting…' : selected.destination || 'Review'}</b></div><div className="confidence"><span>CONFIDENCE</span><strong>{selected.confidence !== undefined ? `${Math.round(selected.confidence * 100)}%` : '—'}</strong></div><div className="confidence-bar"><i style={{ width: `${(selected.confidence || 0) * 100}%` }} /></div><small>{liveMode === 'live' ? `Live answer from Venice · jev-latest${latency ? ` · batch ${latency} ms` : ''}` : liveMode === 'ready' ? 'Start sorting to request live decisions.' : 'Simulated preview · no model confidence reported'}</small></div></>}</aside></section>
-    <section className="how-it-works"><h3>One batch. Many decisions.</h3><p>We send the 18 pirates’ official traits to <b>jev-latest</b> through Venice AI in one shared context. Jev evaluates a choice question for each pirate in parallel. The dock places answers with confidence of at least 85%; uncertain answers stay for review.</p><p>Try Captain’s Orders to sort by a crew’s purpose instead of a species. Jev reads metadata, not the portrait images. This prototype samples 18 of the 9,999 archived portraits.</p>{latency !== null && <p className="teal">Last live batch: {pirates.length} pirate decisions in {latency} ms, including the server’s Venice request. Animation plays afterward.</p>}</section><footer><a className="venice-credit" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">Powered by Venice AI ↗</a><span>Artwork from <a href="https://github.com/proofofplay/piratenation-art" target="_blank" rel="noreferrer">Pirate Nation Art</a> · CC0</span><span>Jev returns decisions, not prose. <a href="https://typesafe.ai" target="_blank" rel="noreferrer">TypeSafe AI ↗</a></span></footer>
+    <header className="topbar"><div className="brand"><span className="brand-mark"><Anchor size={19}/></span><div><p className="eyebrow">A JEV DECISION EXPERIMENT</p><h1>The Pirate Sorting Dock</h1></div></div><div className="top-actions"><span className={`mode-pill ${run?'live':''}`}><span className="pulse-dot"/>{error?'Request failed':requesting?'Asking Jev…':run?'Live Jev · Venice':'Ready for your orders'}</span><a href="https://venice.ai/lp/jev" className="text-link" target="_blank" rel="noreferrer">Powered by Venice AI <ExternalLink size={13}/></a></div></header>
+    <section className="hero-row"><div><p className="kicker"><Sparkles size={14}/> SMALL DECISIONS. A LIVING DOCK.</p><h2>A crew for<br/><em>every captain.</em></h2><p className="lede">Write the orders. Jev decides where each pirate belongs. Watch the arms pick, carry, and place every portrait into its crew.</p></div><div className="hero-stat"><span>ON THIS DOCK</span><strong>{pirates.length}</strong><small>real portraits · 9,999 in the archive</small></div></section>
+    <section className="control-panel"><div className="segmented"><button className={mode==='traits'?'active':''} onClick={()=>{reset();setMode('traits');}}>Trait sort</button><button className={mode==='orders'?'active':''} onClick={()=>{reset();setMode('orders');}}>Captain’s Orders</button></div><label className="art-control">Portraits<select aria-label="Portrait style" value={art} onChange={e=>setArt(e.target.value as typeof art)}><option value="illustrated">Illustrated PFPs</option><option value="voxel">Voxel portraits</option></select></label><div className="control-spacer"/><div className="speed-control"><Gauge size={15}/><input aria-label="Animation speed" type="range" min="0.5" max="4" step="0.5" value={speed} onChange={e=>{const v=Number(e.target.value);speedRef.current=v;setSpeed(v);}}/><span>{speed}×</span></div><button className="reset-btn" onClick={reset}><RotateCcw size={15}/>Reset</button><button className="start-btn" disabled={requesting || !valid} onClick={start}>{requesting?'Asking Jev…':run&&!complete&&!paused?<><Pause size={16}/>Pause</>:<><Play size={16}/>{complete?'Run again':paused?'Resume':'Start sorting'}</>}</button></section>
+    {mode==='orders' && <OrdersEditor brief={brief} bins={customBins} locked={locked} onBrief={setBrief} onBins={setCustomBins} onPreset={i=>{setBrief(presets[i].brief);setCustomBins(presets[i].bins.map(b=>({...b})));}}/>}
+    {!valid && <p className="validation-note">Give each pile a unique name and criteria, and add a captain’s brief.</p>}
+    {error && <p className="error-banner" role="alert">{error} No simulated answers were substituted.</p>}
+    <section className="stats-row"><div><span>DECIDED</span><strong>{run?pirates.length:0}</strong><small>/{pirates.length}</small></div><div><span>PLACED</span><strong className="teal">{placed}</strong><small>pirates</small></div><div><span>IN REVIEW</span><strong className="amber">{delivered-placed}</strong></div><div className="stats-note">{run?`${run.batch.elapsedMs} ms · one live batch`:'One shared state · parallel decisions'}</div></section>
+    <section className="sorting-layout"><SortingFloor pirates={pirates} bins={bins} run={run} delivered={delivered} progress={progress} selected={selectedId} art={art} onSelect={select} paused={paused}/>
+      <aside className="inspector"><div className="inspector-head"><div><span className="section-label">DECISION INSPECTOR</span><h3>Pirate #{selectedId}</h3></div></div><label className="follow-toggle"><input type="checkbox" checked={follow} onChange={e=>setFollow(e.target.checked)}/>Follow the sorting arm</label><div className="inspector-image"><img src={selected.images[art]} alt={selected.name}/><span className="id-badge">#{selectedId}</span></div><div className="pirate-name">{selected.name}<a href={selected.source} aria-label="Open official pirate metadata" target="_blank" rel="noreferrer"><ExternalLink size={14}/></a></div><div className="trait-list">{Object.entries(selected.traits).map(([k,v])=><div key={k}><span>{k}</span><b>{v}</b></div>)}{!Object.keys(selected.traits).length&&<p>Official traits unavailable. Jev must send this pirate to review.</p>}</div>
+        <div className="decision-box"><div className="decision-line"><span>JEV’S CHOICE</span><b>{answer?allBins.find(b=>b.id===answer.choice)?.label || answer.choice:'Awaiting a run'}</b></div><div className="confidence"><span>CONFIDENCE</span><strong>{answer?`${Math.round(answer.confidence*100)}%`:'—'}</strong></div><div className="confidence-bar"><i style={{width:`${answer?answer.confidence*100:0}%`}}/></div>{answer&&<p className="routing-note">{selectedIndex<delivered?'Delivered to':selectedIndex===delivered&&!complete?'Traveling to':'Queued for'} <b>{allBins.find(b=>b.id===destinationFor(answer,bins))?.label}</b>{destinationFor(answer,bins)==='review'?' · Review rule applied.':''}</p>}
+          {answer?.probabilities&&<div className="probabilities"><span className="section-label">OPTION PROBABILITIES</span>{Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]).map(([id,value])=><div key={id}><div><span>{allBins.find(b=>b.id===id)?.label || id}</span><b>{Math.round(value*100)}%</b></div><meter min={0} max={1} value={value} aria-label={`${id} probability`}/></div>)}</div>}
+          <small>{run?`Actual ${run.batch.model} answer via Venice. Confidence is not a guarantee of correctness.`:'Live decisions only. Jev reads the supplied metadata, not the portrait pixels.'}</small></div>
+      </aside>
+    </section>
+    <section className="run-receipt"><div><p className="section-label">INSIDE THE DECISION</p><h3>{run?'These orders produced this run.':'One batch. Many decisions.'}</h3><p>{run?run.brief:'Jev evaluates a separate choice question for each pirate against one shared set of metadata. The arms visualize the answers after the batch returns.'}</p></div>{run&&<div className="batch-receipt"><strong>{run.batch.elapsedMs}<small>ms</small></strong><span>{pirates.length} decisions · server-to-Venice round trip</span><span>Animation time is separate.</span></div>}
+      <div className="receipt-criteria">{bins.map(bin=><div key={bin.id}><b>{bin.label}</b><p>{bin.description}</p></div>)}</div>
+      {run&&<details><summary>Inspect the submitted request and model response</summary><p>The app sends this request to its server; the server calls Venice with the private API key. No key is included here.</p><h4>Submitted brief, metadata, and piles</h4><pre>{JSON.stringify(run.request,null,2)}</pre><h4>Live Jev response</h4><pre>{JSON.stringify(run.batch,null,2)}</pre></details>}
+      <p className="scope-note">18 verified sample records from the 9,999-portrait archive. Answers below 85% confidence go to review. Collection expansion and quality benchmarks are separate next steps.</p>
+    </section>
+    <footer><a className="venice-credit" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">Powered by Venice AI ↗</a><span>Artwork: <a href="https://github.com/proofofplay/piratenation-art" target="_blank" rel="noreferrer">Pirate Nation · CC0</a></span><a href="https://typesafe.ai" target="_blank" rel="noreferrer">Jev by TypeSafe AI ↗</a></footer>
   </main>;
 }
