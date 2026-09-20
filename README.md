@@ -2,7 +2,9 @@
 
 An interactive demo of Jev's typed decisions using Pirate Nation Founder PFP metadata. A central heap of pirate portraits is sorted by animated brass arms into labeled piles. Trait Sort uses official metadata families; Captain's Orders lets visitors define thematic bins and sends the bounded choice to Venice when a server-side key is configured.
 
-The first run uses a curated 18-pirate visual sample, drawn from the 9,999-pirate archive. The product specification and research evidence are maintained alongside this project in the workspace until the remote repository is created.
+**Live demo:** https://jev-pirate-sorter.vercel.app
+
+The first run uses a curated 18-pirate visual sample, drawn from the 9,999-pirate archive. It is intentionally small enough to watch while preserving the same typed-decision pattern used for larger batches.
 
 ## Run it
 
