@@ -1,0 +1,68 @@
+{
+  "name": "Founder's Pirate #229",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/229",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/229",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=229",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=229&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Right Shark"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Pale White"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Disco"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Shark"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Dark Gray"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 3
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 2
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Gemini"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Speed"
+    },
+    {
+      "trait_type": "Level",
+      "value": 31
+    },
+    {
+      "trait_type": "XP",
+      "value": 35374
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}
