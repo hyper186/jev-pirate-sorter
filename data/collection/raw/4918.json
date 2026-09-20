@@ -1,0 +1,68 @@
+{
+  "name": "Founder's Pirate #4918",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/4918",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/4918",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=4918",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=4918&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Druid Male"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Dark Forest"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Cloak"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cloak"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Crazed"
+    },
+    {
+      "trait_type": "Special",
+      "value": "Legendary"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 0
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 0
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Accuracy"
+    },
+    {
+      "trait_type": "Level",
+      "value": 29
+    },
+    {
+      "trait_type": "XP",
+      "value": 26377
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

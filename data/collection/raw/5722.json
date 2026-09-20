@@ -1,0 +1,76 @@
+{
+  "name": "Founder's Pirate #5722",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/5722",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/5722",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=5722",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=5722&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Light Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Disco"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Dockside Damsel"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cat Ears"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Winged Eyeliner"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Pale Green"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 3
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 2
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Cancer"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Air"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Speed"
+    },
+    {
+      "trait_type": "Level",
+      "value": 9
+    },
+    {
+      "trait_type": "XP",
+      "value": 7460
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

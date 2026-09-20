@@ -1,0 +1,84 @@
+{
+  "name": "Founder's Pirate #6283",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/6283",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/6283",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6283",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6283&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Dark Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Rainbow"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Token Pirate Threads"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "3D Glasses"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Aggressive"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Adventurer"
+    },
+    {
+      "trait_type": "Nose Piercing",
+      "value": "Stud"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Dark Gray"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 5
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 5
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Leo"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Air"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 20
+    },
+    {
+      "trait_type": "XP",
+      "value": 10846
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

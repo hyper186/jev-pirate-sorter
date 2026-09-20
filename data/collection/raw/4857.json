@@ -1,0 +1,92 @@
+{
+  "name": "Founder's Pirate #4857",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/4857",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/4857",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=4857",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=4857&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Dark Pink"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Open Sea"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Dockside Damsel"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Octo Crest"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Right Patch"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Forward"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Cheek Mole"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Anchor"
+    },
+    {
+      "trait_type": "Mouthpiece",
+      "value": "Tongue Piercing"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Bright Purple"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 5
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 6
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Taurus"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Fire"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 29
+    },
+    {
+      "trait_type": "XP",
+      "value": 28266
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

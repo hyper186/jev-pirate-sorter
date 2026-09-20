@@ -1,0 +1,88 @@
+{
+  "name": "Founder's Pirate #1639",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/1639",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/1639",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=1639",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=1639&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Pale Pink"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Islands"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Corsair Shroud"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Sou'Wester"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Windsor"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Deep"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Stache And Braid"
+    },
+    {
+      "trait_type": "Mouthpiece",
+      "value": "Gold Tooth"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Dark Gray"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 1
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 3
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Leo"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Damage"
+    },
+    {
+      "trait_type": "Level",
+      "value": 17
+    },
+    {
+      "trait_type": "XP",
+      "value": 11917
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

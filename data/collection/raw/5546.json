@@ -1,0 +1,80 @@
+{
+  "name": "Founder's Pirate #5546",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/5546",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/5546",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=5546",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=5546&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Pale Pink"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Close To Shore"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Cuthroat Blouse"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Bandana Bead"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Looking Up"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Anchor"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Pale Green"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 1
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 6
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Aries"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Damage"
+    },
+    {
+      "trait_type": "Level",
+      "value": 16
+    },
+    {
+      "trait_type": "XP",
+      "value": 11651
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

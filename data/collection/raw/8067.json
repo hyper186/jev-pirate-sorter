@@ -1,0 +1,88 @@
+{
+  "name": "Founder's Pirate #8067",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/8067",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/8067",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=8067",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=8067&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Medium Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Near Shore"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Privateer Plumage"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cavalier With Tally"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Right Monocle"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Bored"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Vintage Modern"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Anchor"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Pale Green"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 5
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 6
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Taurus"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Earth"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 15
+    },
+    {
+      "trait_type": "XP",
+      "value": 7960
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

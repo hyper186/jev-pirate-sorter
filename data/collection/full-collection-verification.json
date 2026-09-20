@@ -1,0 +1,13 @@
+{
+  "verifiedRecords": 9999,
+  "missingIds": [],
+  "failedIds": [],
+  "totalHttpRequests": 9999,
+  "totalResponseBytes": 18511327,
+  "manifestBytes": 13636499,
+  "gzipManifestBytes": 653989,
+  "manifestSha256": "be4aa83430d2d893d8d6634c95e81c58190621f27116543ca92f6222bb3f1601",
+  "veniceRequests": 0,
+  "modelTokens": 0,
+  "modelCostUsd": 0
+}

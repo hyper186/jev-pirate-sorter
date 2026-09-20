@@ -43,6 +43,6 @@ To load all 9,999 portraits:
 4. Send bounded Jev batches from a server-managed run queue, store decisions, and feed a separate animation queue. Persist progress for reconnect/resume. The current endpoint caps a request at 32 records.
 5. Reconcile total counts: unsorted + in transit + placed + review must equal the manifest count.
 
-An initial resumable 1,000-ID metadata collection is stored separately in [`data/collection`](data/collection/README.md), with exact IDs, request records and timing measurements. It does not change the live 18-pirate sample. Full-collection UI integration, quality/threshold evaluation, public-load hardening and comparative benchmarks remain separate work.
+The complete verified 9,999-ID metadata collection is stored separately in [`data/collection`](data/collection/README.md), with exact IDs, request records and timing measurements. It does not change the live 18-pirate sample. Full-collection UI integration, quality/threshold evaluation, public-load hardening and comparative benchmarks remain separate work.
 
 Artwork is from the public [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), released under CC0. This project does not claim endorsement by Proof of Play, TypeSafe AI, or Venice.

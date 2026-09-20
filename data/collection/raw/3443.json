@@ -1,0 +1,80 @@
+{
+  "name": "Founder's Pirate #3443",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/3443",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/3443",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=3443",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=3443&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Dark Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Near Shore"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Coldweather Coat"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Steam Punk Glasses"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Sleepy"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Rainbow Beard"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Royal Blue"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 5
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 1
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Leo"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Water"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 31
+    },
+    {
+      "trait_type": "XP",
+      "value": 33800
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

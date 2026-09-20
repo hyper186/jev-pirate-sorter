@@ -1,0 +1,40 @@
+{
+  "name": "Founder's Pirate #9995",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/9995",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/9995",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9995",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9995&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Special",
+      "value": "POP Team PFP"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 0
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 0
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Level",
+      "value": 9
+    },
+    {
+      "trait_type": "XP",
+      "value": 5374
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

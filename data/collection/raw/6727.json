@@ -1,0 +1,84 @@
+{
+  "name": "Founder's Pirate #6727",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/6727",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/6727",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6727",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6727&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Medium White"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Cutlass"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Corsair Shroud"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Crazed"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Mustache Soul"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Anchor"
+    },
+    {
+      "trait_type": "Nose Piercing",
+      "value": "Stud"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Navy Blue"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 6
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 5
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Leo"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Water"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 6
+    },
+    {
+      "trait_type": "XP",
+      "value": 3750
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

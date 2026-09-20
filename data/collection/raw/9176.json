@@ -1,0 +1,92 @@
+{
+  "name": "Founder's Pirate #9176",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/9176",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/9176",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9176",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9176&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Light Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Rainbow"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Bravado Jacket"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cat Ears"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Shades"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Suspicious"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Scar"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Anchor"
+    },
+    {
+      "trait_type": "Nose Piercing",
+      "value": "Stud"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Pink"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 4
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 1
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Cancer"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Water"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Accuracy"
+    },
+    {
+      "trait_type": "Level",
+      "value": 1
+    },
+    {
+      "trait_type": "XP",
+      "value": 0
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 0
+    }
+  ]
+}

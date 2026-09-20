@@ -1,0 +1,76 @@
+{
+  "name": "Founder's Pirate #2759",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/2759",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/2759",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=2759",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=2759&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Zombie Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Zombie Green"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Shipboard"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Admiral Adornments"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Zombie"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Freckles"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Dark Rust"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 2
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 1
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Aries"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Air"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Evasion"
+    },
+    {
+      "trait_type": "Level",
+      "value": 15
+    },
+    {
+      "trait_type": "XP",
+      "value": 8191
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

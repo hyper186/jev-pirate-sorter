@@ -1,0 +1,88 @@
+{
+  "name": "Founder's Pirate #1610",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/1610",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/1610",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=1610",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=1610&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Male"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Light Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Rainbow"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Patchcoat Pirate"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cavalier"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Skulls Bandana"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Aggressive"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Full Beard"
+    },
+    {
+      "trait_type": "Special",
+      "value": "Wayfinder"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Royal Blue"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 2
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 2
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Taurus"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Water"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Evasion"
+    },
+    {
+      "trait_type": "Level",
+      "value": 31
+    },
+    {
+      "trait_type": "XP",
+      "value": 38472
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

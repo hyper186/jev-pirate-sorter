@@ -1,0 +1,68 @@
+{
+  "name": "Founder's Pirate #7826",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/7826",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/7826",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=7826",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=7826&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Berserker Female"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Stronghold"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Berserker Breastplate"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Simmer"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Freckles"
+    },
+    {
+      "trait_type": "Special",
+      "value": "Legendary"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 0
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 0
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Damage"
+    },
+    {
+      "trait_type": "Level",
+      "value": 32
+    },
+    {
+      "trait_type": "XP",
+      "value": 36697
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}

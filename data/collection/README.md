@@ -4,16 +4,19 @@ This directory stores an offline collection index, separate from the deployed 18
 
 - `raw/{tokenId}.json`: original successful official metadata response.
 - `requests.jsonl`: append-only per-request ledger with token ID, source, UTC time, status, response body bytes, and request duration. Every attempt is recorded.
-- `pirates-1-1000.json`: combined metadata for the initial range, keyed by token ID.
+- `pirates-1-1000.json`: initial benchmark subset.
+- `pirates-1-9999.json`: complete metadata collection, keyed by token ID.
+- `pirates-1-9999.json.gz`: compressed copy of the complete collection.
+- `FULL-COLLECTION-BENCHMARK.md`: complete collection measurements.
+- `full-collection-verification.json`: verified counts, byte sizes and SHA-256 checksum.
 - `run-*.json`: immutable per-run measurements and exact successful/missing/failed IDs.
 - `latest-run.json`: most recent run report.
 
 Resume or extend from the repository root:
 
 ```sh
-python3 scripts/collect-pirates.py 1 1000
-# Later, when authorized, extend the range:
-python3 scripts/collect-pirates.py 1 2000
+python3 scripts/collect-pirates.py 1 9999
+# All 9,999 IDs are already saved; this makes zero new requests.
 ```
 
 Successful IDs with saved files and confirmed missing IDs are skipped. Transient failures are retried up to three times and remain eligible on the next run. Missing metadata is recorded, never invented. A maximum of four concurrent requests and five request starts per second keeps ingestion bounded. Run one collector at a time.

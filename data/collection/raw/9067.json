@@ -1,0 +1,84 @@
+{
+  "name": "Founder's Pirate #9067",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/9067",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/9067",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9067",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9067&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Dark Brown"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Close To Shore"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Dockside Damsel"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Cavalier"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Green Lasers"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Forward"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Scar"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Dark Aquamarine"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 1
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 2
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Aries"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Air"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Damage"
+    },
+    {
+      "trait_type": "Level",
+      "value": 1
+    },
+    {
+      "trait_type": "XP",
+      "value": 0
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 0
+    }
+  ]
+}

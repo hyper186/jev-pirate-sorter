@@ -1,0 +1,84 @@
+{
+  "name": "Founder's Pirate #9201",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/9201",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/9201",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9201",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=9201&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Vampire Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Superwhite"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Open Sea"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Cuthroat Blouse"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Angled Bob"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Hex Specs"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Aggressive Red"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Gem"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Bright Purple"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 6
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 5
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Cancer"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Water"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Damage"
+    },
+    {
+      "trait_type": "Level",
+      "value": 1
+    },
+    {
+      "trait_type": "XP",
+      "value": 0
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 0
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "name": "Founder's Pirate #6488",
+  "description": "A rare Community PFP that survived the great burn, now a purely collectible memento of the Pirate Nation IP, which lives on through https://arcade.piratenation.game",
+  "image": "ipfs://QmRjgEp89ovHdr1M8rkjoC6iEgbNna5kBDjbfubm4zeVDd/6488",
+  "image_illustrated": "ipfs://QmdnsH8mf1rN8C8w9Km3Et84VEqfTgDb2yJP5CWtKVwFxw/6488",
+  "animation_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6488",
+  "external_url": "https://arcade.piratenation.game/pirate-nft-embed.html?tokenId=6488&downloadable=true",
+  "attributes": [
+    {
+      "trait_type": "Character Type",
+      "value": "Human Female"
+    },
+    {
+      "trait_type": "Skin",
+      "value": "Extra Pale White"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Rainbow"
+    },
+    {
+      "trait_type": "Outfit",
+      "value": "Rocket Tee"
+    },
+    {
+      "trait_type": "Headwear",
+      "value": "Buccaneer Tricorn"
+    },
+    {
+      "trait_type": "Facewear",
+      "value": "Bandana"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Side"
+    },
+    {
+      "trait_type": "Facial Trait",
+      "value": "Scar"
+    },
+    {
+      "trait_type": "Earring",
+      "value": "Small Hoop"
+    }
+  ],
+  "historic_game_data": [
+    {
+      "trait_type": "Coat",
+      "value": "Golden Yellow"
+    },
+    {
+      "trait_type": "Dice Roll 1",
+      "value": 5
+    },
+    {
+      "trait_type": "Dice Roll 2",
+      "value": 3
+    },
+    {
+      "trait_type": "Star Sign",
+      "value": "Aries"
+    },
+    {
+      "trait_type": "Generation",
+      "value": 0
+    },
+    {
+      "trait_type": "Elemental Affinity",
+      "value": "Lightning"
+    },
+    {
+      "trait_type": "Expertise",
+      "value": "Health"
+    },
+    {
+      "trait_type": "Level",
+      "value": 32
+    },
+    {
+      "trait_type": "XP",
+      "value": 37700
+    },
+    {
+      "trait_type": "Chests Claimed",
+      "value": 7
+    }
+  ]
+}
