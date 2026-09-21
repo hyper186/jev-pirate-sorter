@@ -8,7 +8,7 @@ Sort all **9,999 Pirate Nation PFPs** with actual `jev-latest` decisions through
 
 1. Leave **All 9,999 pirates** selected and press **Sort 9,999 with Jev**. Rehearsal sizes of 100 and 1,000 are also available.
 2. Watch completed decisions, active processing time, measured throughput and recent batch round trips. Each batch contains up to 128 independent questions (32 for long custom criteria); four requests run concurrently.
-3. Scroll to the dock. A compact live counter stays visible as the arms illustrate selected actual decisions. All returned decisions immediately contribute to pile totals. Animations deliberately show a representative stream so the UI does not throttle the model or pretend to animate thousands of individual cards per second.
+3. Watch the counters and dock together in the first screen. Every returned decision emits one tile in its actual response burst; the arms follow active tiles. Fixed 320 ms visual travel is labeled separately from measured processing time. Scroll below for decision inspection.
 4. Open any pile to browse all its pirates in pages of 48. Inspect any pirate by ID, check its actual choice, confidence and probabilities, or switch illustrated/voxel art.
 5. Try Captain’s Orders: write a brief and define 2–6 named destination piles. This demonstrates changing the classification task without changing application code.
 6. Export the run JSON for every answer, exact criteria, batch IDs/timings, provider-reported usage and aggregate measurements. A full on-page JSON snapshot is available as a download fallback.
@@ -44,3 +44,6 @@ npm run build
 In Vercel, set `VENICE_API_KEY` as a server-only environment variable and redeploy. Never prefix it with `NEXT_PUBLIC` or commit it. Missing model access produces a visible error, never fake results.
 
 Artwork: [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), CC0. Independent demonstration; no endorsement by Proof of Play, TypeSafe AI or Venice is claimed.
+
+### Live visual timing
+The first viewport contains controls, measured counters, and the sorting dock. Each newly returned answer emits exactly one colored card tile to its actual destination (including review). Tiles follow real batch arrival bursts, with a fixed 320 ms display travel time; this is not inference latency. The two arms track active decisions, while concurrent tiles show the full batch volume. There is no playback-speed control, sampled decision stream, or animation backlog. Saved results restore as settled. Reduced-motion preferences suppress travel while retaining actual counts. Inspection and export are below the dock.
