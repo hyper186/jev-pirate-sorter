@@ -2,47 +2,45 @@
 
 [Live demo](https://jev-pirate-sorter.vercel.app) · [Jev on Venice](https://venice.ai/lp/jev)
 
-An interactive, independent Jev demonstration with official Pirate Nation metadata and illustrated/voxel portraits. Jev evaluates a batch of choice questions; two articulated sorting arms pick up individual cards and carry them to their returned destinations.
+Sort all **9,999 Pirate Nation PFPs** with actual `jev-latest` decisions through Venice. Official metadata is authoritative on the server. No deterministic sorter or simulated answers replace Jev.
 
-## Try it
+## Showcase flow
 
-- **Trait Sort:** classify by Character Type.
-- **Captain’s Orders:** write a brief and define 2–6 named piles with your own criteria, or start with a preset.
-- **Start sorting:** requests one batch of actual `jev-latest` answers through Venice. No simulated answers substitute for failures.
-- **Pause / Resume:** freezes and resumes the current carried card. Speed changes apply to the current movement. Reset aborts pending requests and invalidates old responses.
-- **Inspect:** select any portrait, open a pile to browse all its cards, or follow the current arm. The inspector shows the real choice, confidence, and probability distribution.
-- **Inside the decision:** inspect the submitted brief, metadata, criteria, returned batch, and server-measured Venice round-trip time. Animation duration is separate.
+1. Leave **All 9,999 pirates** selected and press **Sort 9,999 with Jev**. Rehearsal sizes of 100 and 1,000 are also available.
+2. Watch completed decisions, active processing time, measured throughput and recent batch round trips. Each batch contains up to 128 independent questions (32 for long custom criteria); four requests run concurrently.
+3. Scroll to the dock. A compact live counter stays visible as the arms illustrate selected actual decisions. All returned decisions immediately contribute to pile totals. Animations deliberately show a representative stream so the UI does not throttle the model or pretend to animate thousands of individual cards per second.
+4. Open any pile to browse all its pirates in pages of 48. Inspect any pirate by ID, check its actual choice, confidence and probabilities, or switch illustrated/voxel art.
+5. Try Captain’s Orders: write a brief and define 2–6 named destination piles. This demonstrates changing the classification task without changing application code.
+6. Export the run JSON for every answer, exact criteria, batch IDs/timings, provider-reported usage and aggregate measurements. A full on-page JSON snapshot is available as a download fallback.
 
-The current confidence threshold remains 85%. Review decisions and low-confidence choices are physically delivered to the review pile. This is a conservative routing policy, not an accuracy benchmark. Portraits visualize results; Jev evaluates supplied metadata, not image pixels.
+## Reliability and measurements
+
+- Completed batches are checkpointed in **IndexedDB in this browser**, with a versioned collection ID. Pause drains active requests; reopening the page restores the checkpoint and Resume sends only unanswered IDs. Keep the tab open to process; this is not a background cloud worker. Interrupted in-flight requests may be repeated and their unreturned usage is unknown.
+- One live run per browser origin via Web Locks where supported. Starting a new run replaces the local checkpoint; export important results first.
+- HTTP 429 responses trigger a provider-aware wait (60 seconds when no retry interval is supplied), shown as a countdown. Other transient failures retry with bounded backoff; completed work survives a failed batch.
+- Timing is browser-observed active processing, including networking, retries, provider cooldown and orchestration. User-paused time is excluded. Batch latency is server-to-Venice round trip, not pure inference time. Arm animation is separate.
+- Token usage is summed only when the provider reports it for every successful batch; missing usage is shown as unknown. A link documents Venice’s promotional pricing; the page does not claim to measure account billing.
+- Trait agreement audits raw Jev choices against known metadata. Choices below 85% confidence go to review. Custom crew criteria are subjective and have no automatic ground-truth accuracy claim.
+- Only a bounded number of portraits are rendered. The page downloads a compact static metadata manifest, not 9,999 portrait images on load.
+
+## Architecture
+
+`public/collection-v1.json` holds official token IDs and traits. `/api/decisions` accepts IDs and pile criteria, resolves traits server-side and invokes Venice with the server-only key. `lib/run-queue.ts` schedules bounded requests; `lib/run-storage.ts` persists checkpoints. The full original metadata and collection benchmarks remain in [`data/collection`](data/collection/README.md).
+
+Jev evaluates metadata, **not image pixels**. Portraits are the visualization. Public demo access shares the configured Venice account limits; provider availability and promotional pricing can change.
 
 ## Run locally
 
 ```sh
 npm install
 cp .env.example .env.local
-# Enter VENICE_API_KEY in .env.local; never commit it.
+# Set VENICE_API_KEY privately in .env.local.
 npm run dev
-```
-
-Without a server key the interface reports that live Jev is not configured and does not move cards. In Vercel, configure the server-only `VENICE_API_KEY` and redeploy. Never use a NEXT_PUBLIC prefix for this key.
-
-```sh
 npm test
 npm run typecheck
 npm run build
 ```
 
-## Collection expansion
+In Vercel, set `VENICE_API_KEY` as a server-only environment variable and redeploy. Never prefix it with `NEXT_PUBLIC` or commit it. Missing model access produces a visible error, never fake results.
 
-This release uses 18 records. Metadata snapshots are stored in `data/pirates.json`, fetched from `https://api.proofofplay.gg/api/metadata/pirate/{id}`. Some archive portraits have unavailable metadata; never invent traits for them.
-
-To load all 9,999 portraits:
-1. Run a resumable, concurrency-limited ingestion task that enumerates portrait IDs and fetches official metadata, recording missing/error states and source timestamps.
-2. Publish a versioned, compressed manifest and pre-sized image thumbnails to CDN storage. Keep full portraits for the inspector and reference both illustrated and voxel variants.
-3. Load the manifest in pages and virtualize the central heap and completed pile galleries; do not render 9,999 SVG images or download all full-size files on first load.
-4. Send bounded Jev batches from a server-managed run queue, store decisions, and feed a separate animation queue. Persist progress for reconnect/resume. The current endpoint caps a request at 32 records.
-5. Reconcile total counts: unsorted + in transit + placed + review must equal the manifest count.
-
-The complete verified 9,999-ID metadata collection is stored separately in [`data/collection`](data/collection/README.md), with exact IDs, request records and timing measurements. It does not change the live 18-pirate sample. Full-collection UI integration, quality/threshold evaluation, public-load hardening and comparative benchmarks remain separate work.
-
-Artwork is from the public [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), released under CC0. This project does not claim endorsement by Proof of Play, TypeSafe AI, or Venice.
+Artwork: [Pirate Nation Art archive](https://github.com/proofofplay/piratenation-art), CC0. Independent demonstration; no endorsement by Proof of Play, TypeSafe AI or Venice is claimed.

@@ -41,3 +41,11 @@ test('rejects duplicate or reserved pile identifiers before spending a model req
   const response = await decide(new Request('https://example.test', { method: 'POST', body: JSON.stringify({records:[{tokenId:1,traits:{}}], bins:[{id:'review',description:'A'},{id:'review',description:'B'}]}) }), 'test-key', async () => { throw new Error('must not call Venice'); });
   assert.equal(response.status, 400);
 });
+
+test('rejects unknown choices and duplicate pirate IDs', async () => {
+ const invalid = await decide(request(), 'test-key', async () => Response.json({answers:{pirate_1:{choice:'invented',confidence:.99}}}));
+ assert.equal(invalid.status,502);
+ const body=await request().json();body.records.push(body.records[0]);
+ const duplicate=await decide(new Request('https://example.test',{method:'POST',body:JSON.stringify(body)}),'test-key',async()=>{throw Error('must not call');});
+ assert.equal(duplicate.status,400);
+});

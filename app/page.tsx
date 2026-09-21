@@ -1,100 +1,77 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { Anchor, ExternalLink, Gauge, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
-import { pirates } from '../lib/pirates';
-import { advanceProgress } from '../lib/choreography';
-import { destinationFor, REVIEW_BIN, type Bin, type DockRun } from '../lib/dock-types';
-import SortingFloor from '../components/SortingFloor';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Anchor, ExternalLink, Play, Pause, Download, RotateCcw, Sparkles } from 'lucide-react';
 import OrdersEditor, { presets } from '../components/OrdersEditor';
-
-const traitBins: Bin[] = ['Human','Zombie','Vampire','Rainbow','Golden','Shark','Special'].map(label=>({id:label,label,description:label==='Special'?'A supplied Character Type outside Human, Zombie, Vampire, Rainbow, Golden and Shark.':`Character Type contains ${label}.`}));
-export default function Home() {
-  const [mode,setMode]=useState<'traits'|'orders'>('traits');
-  const [art,setArt]=useState<'illustrated'|'voxel'>('illustrated');
-  const [brief,setBrief]=useState(presets[0].brief);
-  const [customBins,setCustomBins]=useState<Bin[]>(presets[0].bins.map(b=>({...b})));
-  const [run,setRun]=useState<DockRun|null>(null);
-  const [requesting,setRequesting]=useState(false);
-  const [delivered,setDelivered]=useState(0);
-  const [progress,setProgress]=useState(0);
-  const [paused,setPaused]=useState(false);
-  const [speed,setSpeed]=useState(1);
-  const [error,setError]=useState('');
-  const [selectedId,setSelectedId]=useState(1);
-  const [follow,setFollow]=useState(true);
-  const epoch=useRef(0);
-  const abort=useRef<AbortController|null>(null);
-  const pausedRef=useRef(false), speedRef=useRef(1);
-  const bins=run?.bins || (mode==='traits'?traitBins:customBins);
-  const selected=pirates.find(p=>p.tokenId===selectedId) || pirates[0];
-  const selectedIndex=pirates.findIndex(p=>p.tokenId===selectedId);
-  const answer=run?.batch.answers[`pirate_${selectedId}`];
-  const allBins=[...bins,REVIEW_BIN];
-  const complete=!!run && delivered===pirates.length;
-  const locked=!!run || requesting;
-  const placed=run?pirates.slice(0,delivered).filter(p=>destinationFor(run.batch.answers[`pirate_${p.tokenId}`],bins)!=='review').length:0;
-  const valid=mode==='traits' || (brief.trim().length>0 && customBins.every(b=>b.label.trim() && b.description.trim()) && new Set(customBins.map(b=>b.label.trim().toLowerCase())).size===customBins.length);
-
-  useEffect(()=>{
-    if (!run || delivered>=pirates.length) return;
-    const currentEpoch=epoch.current;
-    let frame:number, previous=0, value=0;
-    function tick(now:number) {
-      if(currentEpoch!==epoch.current) return;
-      if(previous) value=advanceProgress(value,now-previous,speedRef.current,pausedRef.current);
-      previous=now;
-      setProgress(value);
-      if(value>=1) { setProgress(0); setDelivered(count=>count+1); return; }
-      frame=requestAnimationFrame(tick);
-    }
-    frame=requestAnimationFrame(tick);
-    return ()=>cancelAnimationFrame(frame);
-  },[run,delivered]);
-  useEffect(()=>{ if(run && follow && delivered<pirates.length) setSelectedId(pirates[delivered].tokenId); },[run,delivered,follow]);
-  useEffect(()=>()=>{epoch.current+=1;abort.current?.abort();},[]);
-  const reset=()=>{epoch.current+=1;abort.current?.abort();abort.current=null;setRun(null);setRequesting(false);setDelivered(0);setProgress(0);setPaused(false);pausedRef.current=false;setError('');};
-  const select=(id:number)=>{setSelectedId(id);setFollow(false);};
-  const togglePause=()=>{pausedRef.current=!pausedRef.current;setPaused(pausedRef.current);};
-  async function start() {
-    if(run && !complete){togglePause();return;}
-    if(!valid || requesting)return;
-    reset();
-    const currentEpoch=epoch.current;
-    const submittedBins=(mode==='traits'?traitBins:customBins).map(b=>({...b,label:b.label.trim(),description:b.description.trim()}));
-    const submittedBrief=mode==='traits'?'Sort by official Character Type. Missing traits must go to review.':brief.trim();
-    const request={records:pirates.map(({tokenId,traits})=>({tokenId,traits})),bins:submittedBins,brief:submittedBrief};
-    const controller=new AbortController();abort.current=controller;setRequesting(true);setFollow(true);
-    try {
-      const response=await fetch('/api/decisions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),signal:controller.signal});
-      const data=await response.json();
-      if(epoch.current!==currentEpoch)return;
-      if(!response.ok)throw new Error(data.error || 'Venice could not complete this run. Please retry.');
-      if(data.mode!=='live')throw new Error('Live Jev is not configured. Add the Venice key to the server and redeploy.');
-      if(pirates.some(p=>{const a=data.answers?.[`pirate_${p.tokenId}`];return !a || typeof a.choice!=='string' || !Number.isFinite(a.confidence);}))throw new Error('The batch was incomplete. No pirates were moved. Please retry.');
-      setRun({batch:data,bins:submittedBins,brief:submittedBrief,mode,request});
-    } catch(cause){if(epoch.current===currentEpoch)setError(cause instanceof Error?cause.message:'The request failed. Please retry.');}
-    finally{if(epoch.current===currentEpoch)setRequesting(false);}
-  }
-  return <main className="dock-shell">
-    <header className="topbar"><div className="brand"><span className="brand-mark"><Anchor size={19}/></span><div><p className="eyebrow">A JEV DECISION EXPERIMENT</p><h1>The Pirate Sorting Dock</h1></div></div><div className="top-actions"><span className={`mode-pill ${run?'live':''}`}><span className="pulse-dot"/>{error?'Request failed':requesting?'Asking Jev…':run?'Live Jev · Venice':'Ready for your orders'}</span><a href="https://venice.ai/lp/jev" className="text-link" target="_blank" rel="noreferrer">Powered by Venice AI <ExternalLink size={13}/></a></div></header>
-    <section className="hero-row"><div><p className="kicker"><Sparkles size={14}/> SMALL DECISIONS. A LIVING DOCK.</p><h2>A crew for<br/><em>every captain.</em></h2><p className="lede">Write the orders. Jev decides where each pirate belongs. Watch the arms pick, carry, and place every portrait into its crew.</p></div><div className="hero-stat"><span>ON THIS DOCK</span><strong>{pirates.length}</strong><small>real portraits · 9,999 in the archive</small></div></section>
-    <section className="control-panel"><div className="segmented"><button className={mode==='traits'?'active':''} onClick={()=>{reset();setMode('traits');}}>Trait sort</button><button className={mode==='orders'?'active':''} onClick={()=>{reset();setMode('orders');}}>Captain’s Orders</button></div><label className="art-control">Portraits<select aria-label="Portrait style" value={art} onChange={e=>setArt(e.target.value as typeof art)}><option value="illustrated">Illustrated PFPs</option><option value="voxel">Voxel portraits</option></select></label><div className="control-spacer"/><div className="speed-control"><Gauge size={15}/><input aria-label="Animation speed" type="range" min="0.5" max="4" step="0.5" value={speed} onChange={e=>{const v=Number(e.target.value);speedRef.current=v;setSpeed(v);}}/><span>{speed}×</span></div><button className="reset-btn" onClick={reset}><RotateCcw size={15}/>Reset</button><button className="start-btn" disabled={requesting || !valid} onClick={start}>{requesting?'Asking Jev…':run&&!complete&&!paused?<><Pause size={16}/>Pause</>:<><Play size={16}/>{complete?'Run again':paused?'Resume':'Start sorting'}</>}</button></section>
-    {mode==='orders' && <OrdersEditor brief={brief} bins={customBins} locked={locked} onBrief={setBrief} onBins={setCustomBins} onPreset={i=>{setBrief(presets[i].brief);setCustomBins(presets[i].bins.map(b=>({...b})));}}/>}
-    {!valid && <p className="validation-note">Give each pile a unique name and criteria, and add a captain’s brief.</p>}
-    {error && <p className="error-banner" role="alert">{error} No simulated answers were substituted.</p>}
-    <section className="stats-row"><div><span>DECIDED</span><strong>{run?pirates.length:0}</strong><small>/{pirates.length}</small></div><div><span>PLACED</span><strong className="teal">{placed}</strong><small>pirates</small></div><div><span>IN REVIEW</span><strong className="amber">{delivered-placed}</strong></div><div className="stats-note">{run?`${run.batch.elapsedMs} ms · one live batch`:'One shared state · parallel decisions'}</div></section>
-    <section className="sorting-layout"><SortingFloor pirates={pirates} bins={bins} run={run} delivered={delivered} progress={progress} selected={selectedId} art={art} onSelect={select} paused={paused}/>
-      <aside className="inspector"><div className="inspector-head"><div><span className="section-label">DECISION INSPECTOR</span><h3>Pirate #{selectedId}</h3></div></div><label className="follow-toggle"><input type="checkbox" checked={follow} onChange={e=>setFollow(e.target.checked)}/>Follow the sorting arm</label><div className="inspector-image"><img src={selected.images[art]} alt={selected.name}/><span className="id-badge">#{selectedId}</span></div><div className="pirate-name">{selected.name}<a href={selected.source} aria-label="Open official pirate metadata" target="_blank" rel="noreferrer"><ExternalLink size={14}/></a></div><div className="trait-list">{Object.entries(selected.traits).map(([k,v])=><div key={k}><span>{k}</span><b>{v}</b></div>)}{!Object.keys(selected.traits).length&&<p>Official traits unavailable. Jev must send this pirate to review.</p>}</div>
-        <div className="decision-box"><div className="decision-line"><span>JEV’S CHOICE</span><b>{answer?allBins.find(b=>b.id===answer.choice)?.label || answer.choice:'Awaiting a run'}</b></div><div className="confidence"><span>CONFIDENCE</span><strong>{answer?`${Math.round(answer.confidence*100)}%`:'—'}</strong></div><div className="confidence-bar"><i style={{width:`${answer?answer.confidence*100:0}%`}}/></div>{answer&&<p className="routing-note">{selectedIndex<delivered?'Delivered to':selectedIndex===delivered&&!complete?'Traveling to':'Queued for'} <b>{allBins.find(b=>b.id===destinationFor(answer,bins))?.label}</b>{destinationFor(answer,bins)==='review'?' · Review rule applied.':''}</p>}
-          {answer?.probabilities&&<div className="probabilities"><span className="section-label">OPTION PROBABILITIES</span>{Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]).map(([id,value])=><div key={id}><div><span>{allBins.find(b=>b.id===id)?.label || id}</span><b>{Math.round(value*100)}%</b></div><meter min={0} max={1} value={value} aria-label={`${id} probability`}/></div>)}</div>}
-          <small>{run?`Actual ${run.batch.model} answer via Venice. Confidence is not a guarantee of correctness.`:'Live decisions only. Jev reads the supplied metadata, not the portrait pixels.'}</small></div>
-      </aside>
-    </section>
-    <section className="run-receipt"><div><p className="section-label">INSIDE THE DECISION</p><h3>{run?'These orders produced this run.':'One batch. Many decisions.'}</h3><p>{run?run.brief:'Jev evaluates a separate choice question for each pirate against one shared set of metadata. The arms visualize the answers after the batch returns.'}</p></div>{run&&<div className="batch-receipt"><strong>{run.batch.elapsedMs}<small>ms</small></strong><span>{pirates.length} decisions · server-to-Venice round trip</span><span>Animation time is separate.</span></div>}
-      <div className="receipt-criteria">{bins.map(bin=><div key={bin.id}><b>{bin.label}</b><p>{bin.description}</p></div>)}</div>
-      {run&&<details><summary>Inspect the submitted request and model response</summary><p>The app sends this request to its server; the server calls Venice with the private API key. No key is included here.</p><h4>Submitted brief, metadata, and piles</h4><pre>{JSON.stringify(run.request,null,2)}</pre><h4>Live Jev response</h4><pre>{JSON.stringify(run.batch,null,2)}</pre></details>}
-      <p className="scope-note">18 verified sample records from the 9,999-portrait archive. Answers below 85% confidence go to review. Collection expansion and quality benchmarks are separate next steps.</p>
-    </section>
-    <footer><a className="venice-credit" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">Powered by Venice AI ↗</a><span>Artwork: <a href="https://github.com/proofofplay/piratenation-art" target="_blank" rel="noreferrer">Pirate Nation · CC0</a></span><a href="https://typesafe.ai" target="_blank" rel="noreferrer">Jev by TypeSafe AI ↗</a></footer>
-  </main>;
+import LiveFloor from '../components/LiveFloor';
+import { destinationFor, REVIEW_BIN, type Bin, type Batch } from '../lib/dock-types';
+import { newRun, runQueue, metrics, RateLimitError, batchSizeFor, CONCURRENCY, type LiveRun } from '../lib/run-queue';
+import { loadRun, saveRun } from '../lib/run-storage';
+import { PFP_BASE } from '../lib/pirates';
+import type { PirateRecord } from '../lib/types';
+const traitBins:Bin[]=['Human','Zombie','Vampire','Rainbow','Golden','Shark','Special'].map(label=>({id:label,label,description:label==='Special'?'An official Special trait or a Character Type outside the six named families.':`The Character Type for THIS pirate contains ${label}, regardless of gender, outfit or other traits.`}));
+const number=(value:number)=>value.toLocaleString(undefined,{maximumFractionDigits:0});
+export default function Home(){
+ const [collection,setCollection]=useState<PirateRecord[]>([]),[loadError,setLoadError]=useState(''),[ready,setReady]=useState(false);
+ const [run,setRun]=useState<LiveRun|null>(null),[running,setRunning]=useState(false),[draining,setDraining]=useState(false),[clock,setClock]=useState(0);
+ const [size,setSize]=useState(9999),[mode,setMode]=useState<'traits'|'orders'>('traits'),[art,setArt]=useState<'illustrated'|'voxel'>('illustrated');
+ const [brief,setBrief]=useState(presets[0].brief),[customBins,setCustomBins]=useState<Bin[]>(presets[0].bins.map(b=>({...b})));
+ const [selectedId,setSelectedId]=useState(1),[follow,setFollow]=useState(true),[speed,setSpeed]=useState(1),[animationPaused,setAnimationPaused]=useState(false);
+ const [fullReport,setFullReport]=useState<string|null>(null);
+ const [storageError,setStorageError]=useState(''),[search,setSearch]=useState(''),[details,setDetails]=useState(false);
+ const controller=useRef<AbortController|null>(null),pause=useRef(false),generation=useRef(0),started=useRef(0),baseMs=useRef(0),saving=useRef(Promise.resolve());
+ useEffect(()=>{let active=true;fetch('/collection-v1.json').then(r=>{if(!r.ok)throw Error('Collection download failed. Reload to retry.');return r.json();}).then((items:{tokenId:number;traits:Record<string,string>}[])=>{if(!active)return;setCollection(items.map(p=>({...p,name:`Founder's Pirate #${p.tokenId}`,characterType:p.traits['Character Type'],images:{illustrated:`${PFP_BASE}/illustrated/${p.tokenId}.svg`,voxel:`${PFP_BASE}/voxel/${p.tokenId}.png`},source:`https://api.proofofplay.gg/api/metadata/pirate/${p.tokenId}`})));}).catch(e=>{if(active)setLoadError(e.message);});
+ loadRun().then(saved=>{if(!active)return;if(saved){setRun(saved);setSize(saved.total);setMode(saved.mode);if(saved.mode==='orders'){setBrief(saved.brief);setCustomBins(saved.bins);}}}).catch(()=>{if(active)setStorageError('Browser storage is unavailable. Keep this tab open and export results before leaving.');}).finally(()=>{if(active)setReady(true);});
+ return()=>{active=false;generation.current++;controller.current?.abort();};},[]);
+ useEffect(()=>{if(!running)return;const timer=setInterval(()=>setClock(baseMs.current+performance.now()-started.current),200);return()=>clearInterval(timer);},[running]);
+ const bins=run?.bins??(mode==='traits'?traitBins:customBins),allBins=useMemo(()=>[...bins,REVIEW_BIN],[bins]);
+ const stats=run?metrics(run):null,decided=stats?.decided??0,elapsed=running?Math.max(clock,run?.activeMs??0):run?.activeMs??0;
+ const groups=useMemo(()=>{const result=allBins.map(()=>[] as PirateRecord[]);if(run)for(const [key,answer] of Object.entries(run.answers)){const pirate=collection[Number(key.slice(7))-1];const index=allBins.findIndex(b=>b.id===destinationFor(answer,bins));if(pirate && index>=0)result[index].push(pirate);}return result;},[run,collection,allBins,bins]);
+ const review=groups.at(-1)?.length??0;
+ const audit=useMemo(()=>{if(!run || run.mode!=='traits')return null;let eligible=0,correct=0;for(const [key,answer]of Object.entries(run.answers)){const p=collection[Number(key.slice(7))-1];if(!p)continue;const type=p.traits['Character Type'];if(!type && !p.traits.Special)continue;const expected=traitBins.find(b=>b.id!=='Special' && type?.toLowerCase().includes(b.id.toLowerCase()))?.id??'Special';eligible++;if(answer.choice===expected)correct++;}return {eligible,correct};},[run,collection]);
+ const visiblePirates=useMemo(()=>collection.slice(0,run?.total??size),[collection,run?.total,size]);
+ const selected=collection[selectedId-1],answer=run?.answers[`pirate_${selectedId}`];
+ const valid=mode==='traits'||(brief.trim().length>0 && customBins.every(b=>b.label.trim()&&b.description.trim()) && new Set(customBins.map(b=>b.label.trim().toLowerCase())).size===customBins.length);
+ const persist=(snapshot:LiveRun|null)=>{saving.current=saving.current.then(()=>saveRun(snapshot)).catch(()=>setStorageError('Could not save progress in this browser. Export your results before leaving.'));};
+ async function start(){
+  if(running || !ready || !collection.length || !valid)return;
+  const execute=async()=>{
+   const target=run && run.status!=='complete'?structuredClone(run):newRun(size,mode,(mode==='traits'?traitBins:customBins).map(b=>({...b})),mode==='traits'?'Sort each pirate by its own official Character Type. Use Special when the metadata marks a special pirate. Ignore outfits, backgrounds, and traits of other pirates.':brief.trim());
+   const current=++generation.current,abort=new AbortController();controller.current=abort;pause.current=false;setDraining(false);setRunning(true);setAnimationPaused(false);setFollow(true);baseMs.current=target.activeMs;started.current=performance.now();setClock(target.activeMs);setRun({...target,status:'running'});
+   await runQueue(target,{signal:abort.signal,shouldPause:()=>pause.current,fetchBatch:async tokenIds=>{const response=await fetch('/api/decisions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tokenIds,bins:target.bins,brief:target.brief}),signal:AbortSignal.any([abort.signal,AbortSignal.timeout(35000)])});const data=await response.json();if(response.status===429)throw new RateLimitError(data.retryAfterMs??60000);if(!response.ok || data.mode!=='live')throw Error(data.error||'Live Jev is unavailable. Resume to retry.');return data as Batch;},onUpdate:value=>{if(current!==generation.current)return;const snapshot={...value,answers:{...value.answers},receipts:[...value.receipts]};setRun(snapshot);persist(snapshot);}});
+   if(current===generation.current){setRunning(false);setDraining(false);}
+  };
+  if(navigator.locks)await navigator.locks.request('jev-pirate-live-run',{ifAvailable:true},async lock=>{if(!lock){setStorageError('Another tab is already running Jev. Pause it before starting here.');return;}await execute();});else await execute();
+ }
+ function reset(){generation.current++;controller.current?.abort();pause.current=true;setRun(null);setRunning(false);setDraining(false);setClock(0);setDetails(false);persist(null);}
+ const onSelect=useCallback((id:number)=>{setSelectedId(id);setFollow(false);},[]);
+ const onFollow=useCallback((id:number)=>{if(follow)setSelectedId(id);},[follow]);
+ function report(){return run?JSON.stringify({...run,metrics:metrics(run),metadataAgreement:audit,measurement:'Browser-observed active processing time, including network, retries and batch orchestration; excludes paused time. Per-batch elapsedMs is server-to-Venice round trip. Billing and unreturned requests are not measured.'},null,2):'';}
+ function download(){if(!run)return;const blob=new Blob([report()],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`jev-pirates-${run.id}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+ const recent=run?.receipts.slice(-36)??[],maxLatency=Math.max(1,...recent.map(r=>r.elapsedMs));
+ return <main className="dock-shell">
+ <header className="topbar"><div className="brand"><span className="brand-mark"><Anchor size={19}/></span><div><p className="eyebrow">9,999 PIRATES · ONE DECISION MODEL</p><h1>The Pirate Sorting Dock</h1></div></div><a className="text-link" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">Powered by Venice AI <ExternalLink size={13}/></a></header>
+ <section className="hero-row"><div><p className="kicker"><Sparkles size={14}/> JEV BY TYPESAFE AI · LIVE ON VENICE</p><h2>A whole fleet.<br/><em>Decided live.</em></h2><p className="lede">Give 9,999 pirates their orders. Watch Jev turn official metadata into thousands of typed decisions—and a dock full of sorted crews.</p></div><div className="hero-stat"><span>{running?'LIVE THROUGHPUT':run?'REAL DECISIONS':'PIRATES READY FOR JEV'}</span><strong>{running?number(elapsed?decided/(elapsed/1000):0):number(decided||9999)}</strong><small>{running?'pirates / second · measured now':'All pirates. All Jev. No simulated results.'}</small></div></section>
+ <section className="control-panel"><div className="segmented"><button disabled={!!run} className={mode==='traits'?'active':''} onClick={()=>setMode('traits')}>Trait sort</button><button disabled={!!run} className={mode==='orders'?'active':''} onClick={()=>setMode('orders')}>Captain’s Orders</button></div><label className="art-control">Run size<select aria-label="Run size" disabled={!!run} value={size} onChange={e=>setSize(Number(e.target.value))}><option value={100}>100 · rehearsal</option><option value={1000}>1,000 pirates</option><option value={9999}>All 9,999 pirates</option></select></label><label className="art-control">Portraits<select aria-label="Portrait style" value={art} onChange={e=>setArt(e.target.value as typeof art)}><option value="illustrated">Illustrated PFPs</option><option value="voxel">Voxel portraits</option></select></label><div className="control-spacer"/><button className="reset-btn" onClick={reset} disabled={running}><RotateCcw size={15}/>New run</button>{running?<button className="start-btn" disabled={draining} onClick={()=>{pause.current=true;setDraining(true);}}><Pause size={16}/>{draining?'Finishing active batches…':'Pause Jev'}</button>:<button className="start-btn" disabled={!ready||!collection.length||!valid} onClick={start}><Play size={16}/>{run?.status==='complete'?'Run again':run?'Resume Jev':`Sort ${number(size)} with Jev`}</button>}</section>
+ {mode==='orders'&&<OrdersEditor brief={brief} bins={customBins} locked={!!run} onBrief={setBrief} onBins={setCustomBins} onPreset={i=>{setBrief(presets[i].brief);setCustomBins(presets[i].bins.map(b=>({...b})));}}/>}
+ {!valid&&<p className="validation-note">Add a brief and unique pile names with criteria.</p>}
+ {(loadError||run?.error)&&<p className="error-banner" role="alert">{loadError||run?.error} Completed answers are kept. No simulated results are substituted.</p>}
+ {storageError&&<p className="validation-note" role="status">{storageError}</p>}
+ <section className={`live-dashboard ${running?'is-running':''}`}>
+ <div className="live-heading"><span className="section-label"><i className="pulse-dot"/>{running&&(run?.cooldownUntil??0)>Date.now()?`VENICE RATE LIMIT · RESUMING IN ${Math.ceil(((run?.cooldownUntil??0)-Date.now())/1000)}s`:running?'LIVE JEV · STREAMING BATCHES':run?.status==='complete'?'RUN COMPLETE':run?'SAVED RUN · READY TO RESUME':collection.length?'COLLECTION LOADED · READY':'LOADING OFFICIAL METADATA…'}</span><span>{batchSizeFor(bins)} pirates / batch · {CONCURRENCY} parallel requests</span></div>
+ <div className="metric-grid"><div><span>DECIDED BY JEV</span><strong data-testid="decided">{number(decided)}<small> / {number(run?.total??size)}</small></strong></div><div><span>ACTIVE PROCESSING</span><strong data-testid="elapsed">{(elapsed/1000).toFixed(1)}<small> sec</small></strong></div><div><span>END-TO-END THROUGHPUT</span><strong>{elapsed?number(decided/(elapsed/1000)):'—'}<small> / sec</small></strong></div><div><span>MEDIAN JEV ROUND TRIP</span><strong>{stats?.medianMs?number(stats.medianMs):'—'}<small> ms / batch</small></strong></div></div>
+ <progress aria-label="Collection sorting progress" max={run?.total??size} value={decided}/>
+ <div className="run-substats"><span>{run?.receipts.length??0} completed batches · {run?.attempts??0} requests · {run?.retries??0} retries</span><span>{number(decided-review)} placed · {number(review)} review · {number((run?.total??size)-decided)} pending</span></div>
+ <div className="latency-strip" aria-label="Recent batch round-trip times">{recent.map((r,i)=><div key={`${r.ids[0]}-${i}`} title={`${r.ids.length} decisions · ${r.elapsedMs} ms`} style={{height:`${Math.max(8,r.elapsedMs/maxLatency*100)}%`}}/>)}{!recent.length&&<span>Every bar will be a real batch returned by Jev.</span>}</div>
+ <div className="dashboard-foot"><span>Batch round trips · latest {recent.length} · p95 {stats?.p95Ms??0} ms</span><button onClick={download} disabled={!run?.receipts.length}><Download size={13}/>Export run evidence</button></div>
+ </section>
+ <section className="showcase-toolbar"><span>THE LIVE DOCK {run&&<b className="dock-live-count">{number(decided)} decided · {(elapsed/1000).toFixed(1)}s · {elapsed?number(decided/(elapsed/1000)):0}/sec</b>}<small>Counts update on every answer batch; arms illustrate selected decisions.</small></span><div><label>Arm speed <input type="range" aria-label="Animation speed" min="0.5" max="4" step="0.5" value={speed} onChange={e=>setSpeed(Number(e.target.value))}/>{speed}×</label><button onClick={()=>setAnimationPaused(!animationPaused)}>{animationPaused?'Resume arms':'Pause arms'}</button></div></section>
+ <section className="sorting-layout"><LiveFloor run={run} pirates={visiblePirates} groups={groups} bins={bins} selected={selectedId} art={art} onSelect={onSelect} onFollow={onFollow} paused={animationPaused} speed={speed}/>
+ <aside className="inspector"><span className="section-label">INSPECT ANY DECISION</span><h3>Pirate #{selectedId}</h3><form className="pirate-search" onSubmit={e=>{e.preventDefault();const id=Number(search);if(Number.isInteger(id)&&id>=1&&id<=9999)onSelect(id);}}><input aria-label="Pirate ID" type="number" min="1" max="9999" placeholder="Pirate ID" value={search} onChange={e=>setSearch(e.target.value)}/><button>Inspect</button></form><label className="follow-toggle"><input type="checkbox" checked={follow} onChange={e=>setFollow(e.target.checked)}/>Follow the arms</label>{selected&&<><div className="inspector-image"><img src={selected.images[art]} alt={selected.name}/><span className="id-badge">#{selectedId}</span></div><div className="pirate-name">{selected.name}<a href={selected.source} target="_blank" rel="noreferrer" aria-label="Open official pirate metadata"><ExternalLink size={14}/></a></div><div className="trait-list">{Object.entries(selected.traits).map(([k,v])=><div key={k}><span>{k}</span><b>{v}</b></div>)}</div></>}
+ <div className="decision-box"><div className="decision-line"><span>JEV’S CHOICE</span><b>{answer?allBins.find(b=>b.id===answer.choice)?.label:'Awaiting decision'}</b></div><div className="confidence"><span>CONFIDENCE</span><strong>{answer?`${Math.round(answer.confidence*100)}%`:'—'}</strong></div>{answer&&<p className="routing-note">Placed in <b>{allBins.find(b=>b.id===destinationFor(answer,bins))?.label}</b>{answer.confidence<.85?' · Below 85% review threshold.':''}</p>}{answer?.probabilities&&<div className="probabilities">{Object.entries(answer.probabilities).sort((a,b)=>b[1]-a[1]).map(([id,value])=><div key={id}><div><span>{allBins.find(b=>b.id===id)?.label??id}</span><b>{Math.round(value*100)}%</b></div><meter min={0} max={1} value={value} aria-label={`${id} probability`}/></div>)}</div>}<small>Actual jev-latest response via Venice. Jev reads metadata, not portrait pixels.</small></div></aside></section>
+ <section className="run-receipt"><div><p className="section-label">WHAT THIS DEMONSTRATES</p><h3>Typed decisions. Shared context. Real evidence.</h3><p>Every pirate gets its own choice question. Jev evaluates the questions against shared official metadata and returns a choice, confidence, and probabilities. Your orders change the task without rewriting the sorting rules.</p><p>{run?.brief??'Start with trait sorting, then try a custom crew in Captain’s Orders.'}</p></div><div className="batch-receipt"><strong>{number(collection.length)}</strong><span>official metadata records loaded</span><span>{audit?.eligible?`${(100*audit.correct/audit.eligible).toFixed(1)}% raw choice agreement · ${number(audit.eligible)} known traits`:'Custom orders explore subjective crew assignments.'}</span></div><div className="receipt-criteria">{bins.map(b=><div key={b.id}><b>{b.label}</b><p>{b.description}</p></div>)}</div>
+ <div className="evidence-notes"><p><b>Measured speed:</b> active browser-observed processing time includes networking, retries and queue overhead; paused time and arm animation are excluded. Batch timings measure the server-to-Venice round trip, not pure inference time.</p><p><b>Usage:</b> {stats?.inputTokens!=null?`${number(stats.inputTokens)} input tokens · ${number(stats.outputTokens??0)} output tokens reported across completed batches.`:'Token usage is not reported for all completed batches; no estimate is substituted.'} <a href="https://venice.ai/lp/jev#pricing" target="_blank" rel="noreferrer">Venice lists free promotional input</a>; this is not a billing receipt.</p><p><b>Resume:</b> completed batches are saved in this browser. Keep the tab open to continue; after closing or refreshing, press Resume. In-flight requests may be repeated after an interruption. Export results before starting a new run.</p><p><b>Quality:</b> below 85% confidence goes to review. Trait agreement compares raw Jev choices with known metadata; it is not a benchmark of subjective custom orders or other models.</p></div>
+ {run&&<details onToggle={e=>setDetails(e.currentTarget.open)}><summary>Inspect the latest submitted batch and model answers</summary>{details&&<pre>{JSON.stringify({model:'jev-latest',brief:run.brief,bins:run.bins,records:run.receipts.at(-1)?.ids.map(id=>({tokenId:id,traits:collection[id-1]?.traits})),answers:Object.fromEntries((run.receipts.at(-1)?.ids??[]).map(id=>[`pirate_${id}`,run.answers[`pirate_${id}`]])),receipt:run.receipts.at(-1)},null,2)}</pre>}</details>}
+ <details onToggle={e=>setFullReport(e.currentTarget.open?report():null)}><summary>View complete run report (all answers)</summary><p>This is a snapshot when opened. You can select and copy this JSON if your browser does not save the download.</p>{fullReport&&<pre data-testid="full-run-report">{fullReport}</pre>}</details>
+ </section><footer><a className="venice-credit" href="https://venice.ai/lp/jev" target="_blank" rel="noreferrer">Powered by Venice AI ↗</a><span>Artwork: <a href="https://github.com/proofofplay/piratenation-art" target="_blank" rel="noreferrer">Pirate Nation · CC0</a></span><a href="https://typesafe.ai" target="_blank" rel="noreferrer">Jev by TypeSafe AI ↗</a></footer>
+ </main>;
 }

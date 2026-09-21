@@ -1,6 +1,6 @@
 # Resumable Pirate Nation metadata collection
 
-This directory stores an offline collection index, separate from the deployed 18-pirate demo. Fetching metadata does not call Jev or Venice. Portrait image files are not downloaded in this pass; the official metadata preserves image references, and the existing app supports the public illustrated/voxel archive.
+This directory stores the original offline metadata archive. A compact projection in `public/collection-v1.json` now powers the deployed full-collection demo. Fetching metadata does not call Jev or Venice. Portrait image files are not downloaded in this pass; the official metadata preserves image references, and the existing app supports the public illustrated/voxel archive.
 
 - `raw/{tokenId}.json`: original successful official metadata response.
 - `requests.jsonl`: append-only per-request ledger with token ID, source, UTC time, status, response body bytes, and request duration. Every attempt is recorded.
@@ -23,4 +23,4 @@ Successful IDs with saved files and confirmed missing IDs are skipped. Transient
 
 Byte counts measure downloaded response bodies, excluding HTTP/TLS overhead. Elapsed duration includes throttling, retries, file writes and manifest creation. Model requests, tokens and cost are zero because no model is invoked. Metadata-host billing is not measured; this is a public endpoint with no credentials. One preliminary successful connectivity probe (ID 2, 1,806 bytes, 0.231261 seconds) preceded the measured collection and is excluded from its ledger totals.
 
-These are ingestion measurements, not Jev sorting latency, accuracy, or cost benchmarks. Loading all collected records into the live demo still requires the paginated display and bounded sorting queue described in the main README.
+These are ingestion measurements, not Jev sorting latency, accuracy, or cost benchmarks. The live demo now includes the paginated display and bounded Jev sorting queue described in the main README. Its live model benchmark is documented in `docs/benchmarks/2026-09-20-full-collection-live.md`.
